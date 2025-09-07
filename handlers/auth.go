@@ -3,8 +3,10 @@ package handlers
 import (
 	"net/http"
 	"regexp"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	models "github.com/krisn2/second-brain"
 	"github.com/krisn2/second-brain/db"
 	"golang.org/x/crypto/bcrypt"
@@ -70,12 +72,19 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Wrong username or password"})
 	}
 
-	if bcrypt.CompareHashAndPassword([]byte(user.Username), []byte(body.Password)) != nil {
+	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)) != nil {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Wrong username or password"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "login endpoint",
-	})
+	claims := jwt.MapClaims{
+		"userId": user.ID.String(),
+		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	signed, _ := token.SignedString([]byte("MY_SECRET"))
+
+	c.JSON(http.StatusOK, gin.H{"token": signed})
 }
