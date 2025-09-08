@@ -13,6 +13,12 @@ import (
 // write the Auth middleware in return func where para is context
 // get the header use context
 // if there is nothing in header return missing token and abort the process
+// trim the auth header and store it in tokenStr
+// parse the token it valid or not
+// if not valid return invalid token
+// if valid get the claims
+// set the userId in context
+// next
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
