@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -25,8 +24,4 @@ type Content struct {
 type Tag struct {
 	ID    uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Title string    `gorm:"not null"`
-}
-
-func AutoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&User{}, &Content{}, &Tag{})
 }
