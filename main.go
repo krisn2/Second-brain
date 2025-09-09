@@ -1,7 +1,11 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/krisn2/second-brain/db"
 	"github.com/krisn2/second-brain/handlers"
 	"github.com/krisn2/second-brain/middleware"
@@ -9,8 +13,12 @@ import (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+		log.Fatal(err)
+	}
 	router := gin.Default()
-	db.Connect()
+	db.Connect(os.Getenv("DATABASE_URL"))
 	if err := db.DB.AutoMigrate(&models.User{}, &models.Content{}, &models.Tag{}); err != nil {
 		panic(err)
 	}

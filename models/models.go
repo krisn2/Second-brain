@@ -12,13 +12,14 @@ type User struct {
 }
 
 type Content struct {
-	ID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Link   string    `gorm:"not null"`
-	Title  string    `gorm:"not null"`
-	Type   string    `gorm:"not null"`
-	UserId uuid.UUID `gorm:"type:uuid; not null"`
+	ID      uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	Link    string    `gorm:"not null"`
+	Title   string    `gorm:"not null"`
+	Type    string    `gorm:"not null"` // tweet, blog, linkdin post
+	Content string    `gorm:"not null"`
+	UserId  uuid.UUID `gorm:"type:uuid; not null"`
 
-	Tags []Tag `gorm:"many2many:content_tags;"`
+	Tags []Tag `gorm:"many2many:Tag;"`
 }
 
 type Tag struct {
