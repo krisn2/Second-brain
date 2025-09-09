@@ -29,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenStr := strings.TrimPrefix(authHeader, "Bearer")
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ") // don't forget to add the space
 		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (any, error) {
 			return []byte("MY_SECRET"), nil
 		})
