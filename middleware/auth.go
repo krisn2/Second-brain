@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,10 +30,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+		jwtSecret := os.Getenv("JWT_SECRET")
+		if jwtSecret == "" {
+			log.Fatal("JWT_SECRET environment variable not set")
+		}
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ") // don't forget to add the space
 		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (any, error) {
-			return []byte("MY_SECRET"), nil
+			return []byte(jwtSecret), nil
 		})
 
 		if err != nil || !token.Valid {

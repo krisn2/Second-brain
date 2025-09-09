@@ -64,7 +64,7 @@ func AddContent(c *gin.Context) {
 	)
 }
 
-func GetContent(c *gin.Context) {
+func SearchBrain(c *gin.Context) {
 
 	query := c.Query("query")
 	if query == "" {

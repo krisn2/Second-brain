@@ -19,7 +19,7 @@ type Content struct {
 	Content string    `gorm:"not null"`
 	UserId  uuid.UUID `gorm:"type:uuid; not null"`
 
-	Tags []Tag `gorm:"many2many:Tag;"`
+	Tags []Tag `gorm:"many2many:content_tags;"`
 }
 
 type Tag struct {

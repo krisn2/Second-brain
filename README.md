@@ -91,6 +91,26 @@ Returns
 }
 ```
 
+### search Brain 
+
+GET /api/v1/content/:query
+
+return 
+```
+{
+	"ai_response":"string",
+	"original_content:" "content": [
+		{
+			"id": 1,
+			"type": "document" | "tweet" | "youtube" | "link",
+			"link": "url",
+			"title": "Title of doc/video",
+			"tags": ["productivity", "politics", ...]
+		}
+	
+	]"
+}
+
 ### Delete a document
 
 DELETE /api/v1/content

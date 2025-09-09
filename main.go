@@ -28,7 +28,7 @@ func main() {
 
 	content := router.Group("/api/v1/content", middleware.AuthMiddleware())
 	{
-		content.GET("", handlers.GetContent)
+		content.GET("/:query", handlers.SearchBrain)
 		content.POST("", handlers.AddContent)
 	}
 

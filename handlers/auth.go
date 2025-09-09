@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"time"
 	"unicode"
 
@@ -103,8 +105,12 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable not set")
+	}
 
-	signed, _ := token.SignedString([]byte("MY_SECRET"))
+	signed, _ := token.SignedString([]byte(jwtSecret))
 
 	c.JSON(http.StatusOK, gin.H{"token": signed})
 }
