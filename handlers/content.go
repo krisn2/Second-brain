@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/krisn2/second-brain/db"
 	"github.com/krisn2/second-brain/models"
+	"gorm.io/gorm"
 )
 
 func AddContent(c *gin.Context) {
@@ -67,8 +69,10 @@ func AddContent(c *gin.Context) {
 func SearchBrain(c *gin.Context) {
 
 	query := c.Query("query")
+	log.Println(query)
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query is required"})
+		return
 	}
 
 	var content models.Content
@@ -106,7 +110,7 @@ func SearchBrain(c *gin.Context) {
 		Messages: []Message{
 			{
 				Role:    "user",
-				Content: "Explan me this and give real world example of the content i provided and also give me a short summary of the content" + query,
+				Content: "Explan me this and give real world example of the content i provided and also give me a short summary of the content" + content.Content,
 			},
 		},
 		Model: "llama-3.3-70b-versatile",
@@ -159,5 +163,57 @@ func SearchBrain(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"ai_response":      aiResponseContent,
 		"original_content": content,
+	})
+}
+
+func DeleteContent(c *gin.Context) {
+	contentId := c.Param("id")
+
+	userId, exists := c.Get("userId")
+
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "UnAuthorized"})
+		return
+	}
+	userUuid, err := uuid.Parse(userId.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid user id"})
+		return
+	}
+
+	contentUuiId, err := uuid.Parse(contentId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid Content ID"})
+		return
+	}
+	var content models.Content
+	// gorm.G[models.Content](db.DB).Where("id = ?", userUuid).First(&content)
+	if err := db.DB.Where("id = ? AND user_id = ?", contentUuiId, userUuid).First(&content).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Content not found or not owned by user"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	if err := db.DB.Delete(&content).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Failed to delete content"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Message": "Content deleted successfully"})
+
+}
+
+func GetContent(c *gin.Context) {
+	var contents []models.Content
+
+	if err := db.DB.Preload("Tags").Find(&contents).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error to get all content"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"Contents": contents,
 	})
 }

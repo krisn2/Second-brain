@@ -28,8 +28,10 @@ func main() {
 
 	content := router.Group("/api/v1/content", middleware.AuthMiddleware())
 	{
-		content.GET("/:query", handlers.SearchBrain)
+		content.GET("", handlers.SearchBrain)
 		content.POST("", handlers.AddContent)
+		content.DELETE("", handlers.DeleteContent)
+		content.GET("", handlers.GetContent)
 	}
 
 	router.Run()

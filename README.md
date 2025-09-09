@@ -45,7 +45,7 @@ POST  /api/v1/signin
 
 ```
 {
-    "token":"jwt_token"
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc1MjY5NDAsInVzZXJJZCI6IjM0ZDYxZWJjLTcxODYtNGExOS1hMzcyLWQwZGQ3ZDU3NzE3YiJ9.t7b-kzkpZQokyxFEAToam0g5XW-njmCL9jH1D1K2TV0"
 }
 ```
 
@@ -110,6 +110,7 @@ return
 	
 	]"
 }
+```
 
 ### Delete a document
 
