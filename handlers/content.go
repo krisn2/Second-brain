@@ -197,6 +197,11 @@ func DeleteContent(c *gin.Context) {
 		return
 	}
 
+	if err := db.DB.Model(&content).Association("Tags").Clear(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Failed to clear associations"})
+		return
+	}
+
 	if err := db.DB.Delete(&content).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Failed to delete content"})
 		return

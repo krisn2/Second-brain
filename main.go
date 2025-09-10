@@ -26,12 +26,12 @@ func main() {
 	router.POST("/api/v1/signup", handlers.Register)
 	router.POST("/api/v1/login", handlers.Login)
 
-	content := router.Group("/api/v1/content", middleware.AuthMiddleware())
+	content := router.Group("/api/v1/brain", middleware.AuthMiddleware())
 	{
 		content.GET("", handlers.SearchBrain)
 		content.POST("", handlers.AddContent)
-		content.DELETE("", handlers.DeleteContent)
-		content.GET("", handlers.GetContent)
+		content.DELETE("/:id", handlers.DeleteContent)
+		content.GET("/All", handlers.GetContent)
 	}
 
 	router.Run()
